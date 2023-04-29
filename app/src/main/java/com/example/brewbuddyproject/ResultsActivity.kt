@@ -79,10 +79,20 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        pingBreweryAPI(breweryLocations[0].zip) //temp search location
+        //pingBreweryAPI(breweryLocations[0].zip) //temp search location
     } // End of OnCreate Method
 
     fun pingBreweryAPI(searchString: String) {
+
+        //split string into city and state
+        val delim = ","
+        val cityStateArray = searchString.split(delim).toTypedArray()
+        for(entry in cityStateArray) {
+            //entry.replace("\\s".toRegex(), "1")
+            entry.trim()
+            Log.d(TAG, "StringSplit: entry = ${entry.trim()}")
+        }
+
 
         val retrofitBuilder = Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -90,9 +100,10 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
             .build()
 
         val breweryLocationsAPI = retrofitBuilder.create(BreweryService::class.java)
-        Log.d(TAG, "pingBreweryAPI: inside pingAPI")
-        breweryLocationsAPI.getBreweryByZip(searchString, 50).enqueue(object : Callback<List<Brewery>?> {
-
+        //Log.d(TAG, "pingBreweryAPI: inside pingAPI")
+        //breweryLocationsAPI.getBreweryByZip(searchString, 5).enqueue(object : Callback<List<Brewery>?> {
+        //breweryLocationsAPI.getBreweryByLocation("38.8977,77.0365", 5).enqueue(object : Callback<List<Brewery>?> {
+        breweryLocationsAPI.getBreweryByCityState(cityStateArray[0].trim(), cityStateArray[1].trim()).enqueue(object : Callback<List<Brewery>?> {
             // If we get a response from the API
             override fun onResponse(call: Call<List<Brewery>?>, response: Response<List<Brewery>?>) {
                 Log.d(TAG, "onResponse: $response")
@@ -131,18 +142,21 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
     fun updatePins() {
         //add pins to Maps
         mMap.clear()
-        var hartford = LatLng(41.7659,-72.681)
-        Log.d(TAG, "updatePins: inside Update Pins")
+        //var hartford = LatLng(41.7659,-72.681)
+        //Log.d(TAG, "updatePins: inside Update Pins")
+        var coordinates = LatLng(38.37250, 90.255)
         for (brewery in breweryLocations) {
             //log these lat/lons and see what we got
             if(brewery.longitude != null) {
                 Log.d(TAG, "updatePins: ${brewery.name} with lon ${brewery.longitude.toDouble()} and lat ${brewery.latitude.toDouble()}")
-                val coordinates = LatLng(brewery.latitude.toDouble(), brewery.longitude.toDouble())
+                coordinates = LatLng(brewery.latitude.toDouble(), brewery.longitude.toDouble())
                 mMap.addMarker(MarkerOptions().position(coordinates).title("${brewery.name}"))
             }
         }
-        mMap.addMarker(MarkerOptions().position(hartford).title("Test Location"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(hartford))
+        //mMap.addMarker(MarkerOptions().position(hartford).title("Test Location"))
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hartford, 12F))
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, 10F)
+        mMap.animateCamera(cameraUpdate)
     }
 
     fun searchButton(view: View) {

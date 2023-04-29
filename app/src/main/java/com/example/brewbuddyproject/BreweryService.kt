@@ -17,6 +17,7 @@ interface BreweryService {
     fun getBreweryByZip(@Query("by_postal") zip: String,
                         @Query("per_page") numberResults: Int): Call<List<Brewery>>
 
-    ///test test test
-    // TEST 4.0 - Joe
+    @GET("breweries")
+    fun getBreweryByCityState(@Query("by_city") city: String,
+                              @Query("by_state") state: String): Call<List<Brewery>>
 }
