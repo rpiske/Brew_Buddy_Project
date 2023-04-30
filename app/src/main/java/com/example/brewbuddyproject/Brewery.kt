@@ -12,8 +12,8 @@ data class Brewery(
     val city: String,
     @SerializedName("state_province") val state: String,
     @SerializedName("postal_code") val zip: String,
-    val longitude: String,
-    val latitude: String,
+    var longitude: String,
+    var latitude: String,
     val phone: String,
     val website_url: String
 )

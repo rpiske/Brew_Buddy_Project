@@ -33,6 +33,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
 
 class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -103,7 +104,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         //Log.d(TAG, "pingBreweryAPI: inside pingAPI")
         //breweryLocationsAPI.getBreweryByZip(searchString, 5).enqueue(object : Callback<List<Brewery>?> {
         //breweryLocationsAPI.getBreweryByLocation("38.8977,77.0365", 5).enqueue(object : Callback<List<Brewery>?> {
-        breweryLocationsAPI.getBreweryByCityState(cityStateArray[0].trim(), cityStateArray[1].trim()).enqueue(object : Callback<List<Brewery>?> {
+        breweryLocationsAPI.getBreweryByCityState(cityStateArray[0].trim(), convertStatetoFullName(cityStateArray[1].trim())).enqueue(object : Callback<List<Brewery>?> {
             // If we get a response from the API
             override fun onResponse(call: Call<List<Brewery>?>, response: Response<List<Brewery>?>) {
                 Log.d(TAG, "onResponse: $response")
@@ -119,8 +120,9 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 breweryLocations.clear()
                 breweryLocations.addAll(body)
+                fillDataHoles() //this function fills in missing lat/lon from API Results
 
-                Log.d(TAG, "onResponse: inside onResponse")
+                //Log.d(TAG, "onResponse: inside onResponse")
                 myRecycleAdapter.notifyDataSetChanged()
                 if(mMap != null)
                 //how do we wait for pingBreweryAPI to finish and update breweryLocations??
@@ -137,6 +139,33 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.d(TAG, "onResponse: $t")
             }
         })
+    }
+
+    @Suppress("DEPRECATION")
+    fun fillDataHoles() {
+        geocoder = Geocoder(this)
+        for ( (index, brewery) in breweryLocations.withIndex()) {
+            if(brewery.longitude == null || brewery.longitude == null) {
+                try {
+                    val builder = StringBuilder()
+                    builder.append(brewery.street)
+                           .append(", ")
+                           .append(brewery.city)
+                           .append(", ")
+                           .append(brewery.state)
+                    Log.d(TAG, "fillDataHoles: $builder")
+                    val addressInfo = geocoder.getFromLocationName(builder.toString(), 1)
+                    if(!addressInfo.isNullOrEmpty()) {
+                        breweryLocations[index].latitude = addressInfo[0].latitude.toString()
+                        breweryLocations[index].longitude = addressInfo[0].longitude.toString()
+                        Log.d(TAG, "fillDataHoles: ${breweryLocations[index].name} has lat: ${breweryLocations[index].latitude} and lon: ${breweryLocations[index].longitude}")
+                    }
+                }
+                catch (e: Exception) {
+                    Log.e(TAG, "fillDataHoles: ${e.message}")
+                }
+            }
+        }
     }
 
     fun updatePins() {
@@ -252,6 +281,66 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun View.hideKeyboard() {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    fun convertStatetoFullName(stateInput: String): String {
+        val state = stateInput.toLowerCase()
+        Log.d(TAG, "convertStatetoFullName: $state")
+        return when(state) {
+            "al" -> "alabama"
+            "ak" -> "alaska"
+            "az" -> "arizona"
+            "ar" -> "arkansas"
+            "ca" -> "california"
+            "co" -> "colorado"
+            "ct" -> "connecticut"
+            "de" -> "delaware"
+            "dc" -> "district of columbia"
+            "fl" -> "florida"
+            "ga" -> "georgia"
+            "hi" -> "hawaii"
+            "id" -> "idaho"
+            "il" -> "illinois"
+            "in" -> "indiana"
+            "ia" -> "iowa"
+            "ks" -> "kansas"
+            "ky" -> "kentucky"
+            "la" -> "louisiana"
+            "me" -> "maine"
+            "md" -> "maryland"
+            "ma" -> "massachusetts"
+            "mi" -> "michigan"
+            "mn" -> "minnesota"
+            "ms" -> "mississippi"
+            "mo" -> "missouri"
+            "mt" -> "montana"
+            "ne" -> "nebraska"
+            "nv" -> "nevada"
+            "nh" -> "new hampshire"
+            "nj" -> "new jersey"
+            "nm" -> "new mexico"
+            "ny" -> "new york"
+            "nc" -> "north carolina"
+            "nd" -> "north dakota"
+            "oh" -> "ohio"
+            "ok" -> "oklahoma"
+            "or" -> "oregon"
+            "pa" -> "pennsylvania"
+            "pr" -> "puerto rico"
+            "ri" -> "rhode island"
+            "sc" -> "south carolina"
+            "sd" -> "south dakota"
+            "tn" -> "tennessee"
+            "tx" -> "texas"
+            "ut" -> "utah"
+            "vt" -> "vermont"
+            "va" -> "virgina"
+            "wa" -> "washington"
+            "wv" -> "west virginia"
+            "wi" -> "wisconsin"
+            "wy" -> "wyoming"
+            else -> {stateInput} //if invalid input, return original search and generate error
+        }
     }
 
 
