@@ -1,6 +1,7 @@
 package com.example.brewbuddyproject
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,15 +11,16 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 
-class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>): RecyclerView.Adapter<MyRecycleAdapter.MyViewHolder>() {
+class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private val context: Context): RecyclerView.Adapter<MyRecycleAdapter.MyViewHolder>() {
 
     var counter = 1
     var selectedItemPosition: Int = -1 // -1 means that nothing was selected
 
     private val TAG = "MyRecycleAdapter"
-
 
     inner class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val brewName = itemView.findViewById<TextView>(R.id.brew_name)
@@ -26,8 +28,6 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>): Recycl
         val brewCity = itemView.findViewById<TextView>(R.id.brew_city_state)
         val brewPhone = itemView.findViewById<TextView>(R.id.brew_phone)
         val brewWebsite = itemView.findViewById<TextView>(R.id.brew_website)
-
-
     }
 
 
@@ -60,8 +60,9 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>): Recycl
             selectedItemPosition = position
             notifyDataSetChanged()
 
+            val myIntent = Intent(context, DetailsActivity::class.java)
+            context.startActivity(myIntent)
         }
-
 
         if(selectedItemPosition == position){
             // Change Current Selection to Orange
@@ -75,10 +76,10 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>): Recycl
 
         }
     }
+
     // Return the name of the current brewery that is selected
     fun getCurrentBrewerySelection() : Int {
         return selectedItemPosition
     }
-
 
 }

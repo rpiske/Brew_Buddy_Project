@@ -74,7 +74,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         breweryLocations.add(sampleSpot)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-        myRecycleAdapter = MyRecycleAdapter(breweryLocations)
+        myRecycleAdapter = MyRecycleAdapter(breweryLocations, this)
         recyclerView.adapter = myRecycleAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
