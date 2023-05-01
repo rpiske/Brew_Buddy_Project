@@ -40,8 +40,8 @@
 
     <TextView
         android:id="@+id/brew_city_state"
-        android:layout_width="84dp"
-        android:layout_height="18dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="3dp"
         android:text="City, ST ZIP"

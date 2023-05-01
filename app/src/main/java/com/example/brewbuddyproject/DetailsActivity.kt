@@ -26,7 +26,7 @@ class DetailsActivity : AppCompatActivity() {
         Log.d(TAG, "breweryWebsite: $brewWebsite")
 
         findViewById<TextView>(R.id.details_brewery_name).text = brewName.toString()
-        findViewById<TextView>(R.id.details_brewery_addresss).text = brewStreet.toString() + ", " + brewCity.toString() + ", " + "State will go here"
+        findViewById<TextView>(R.id.details_brewery_addresss).text = brewStreet.toString() + ", " + brewCity.toString()
         findViewById<TextView>(R.id.details_brewery_phone_number).text = "Phone: " + brewPhone.toString()
 
 

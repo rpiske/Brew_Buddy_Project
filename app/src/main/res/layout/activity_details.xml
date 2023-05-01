@@ -11,7 +11,7 @@
         android:layout_width="125dp"
         android:layout_height="115dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/baseline_local_drink_24" />
@@ -20,11 +20,10 @@
         android:id="@+id/details_brewery_phone_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="Phone: 7777777777"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/details_brewery_addresss" />
 
@@ -32,29 +31,30 @@
         android:id="@+id/details_brewery_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/details_brewery_image"
         app:layout_constraintTop_toBottomOf="@+id/details_brewery_type" />
 
     <TextView
         android:id="@+id/details_brewery_details_notes"
-        android:layout_width="383dp"
-        android:layout_height="370dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="384dp"
+        android:layout_height="240dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:text="Notes: Test"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/details_brewery_phone_number" />
 
     <Button
         android:id="@+id/details_brewery_website_button"
-        android:layout_width="381dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="370dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="Website"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/details_brewery_details_notes" />
 
@@ -62,34 +62,33 @@
         android:id="@+id/details_brewery_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="104dp"
         android:text="Type: micro"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toEndOf="@+id/details_brewery_image"
         app:layout_constraintTop_toBottomOf="@+id/details_brewery_name" />
 
     <TextView
         android:id="@+id/details_brewery_addresss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:text="Street, City, State"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.053"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_image" />
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_rating" />
 
     <TextView
         android:id="@+id/details_brewery_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="61dp"
         android:text="Brewery Name"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toEndOf="@+id/details_brewery_image"
         app:layout_constraintTop_toTopOf="parent" />
 
