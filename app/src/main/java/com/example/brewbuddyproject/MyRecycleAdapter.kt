@@ -61,6 +61,13 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
             notifyDataSetChanged()
 
             val myIntent = Intent(context, DetailsActivity::class.java)
+
+            myIntent.putExtra("brewName", holder.brewName.text)
+            myIntent.putExtra("brewStreet", holder.brewStreet.text)
+            myIntent.putExtra("brewCity", holder.brewCity.text)
+            myIntent.putExtra("brewPhone", holder.brewPhone.text)
+            myIntent.putExtra("brewWebsite", holder.brewWebsite.text)
+
             context.startActivity(myIntent)
         }
 
