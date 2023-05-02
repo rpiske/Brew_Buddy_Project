@@ -4,10 +4,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.firebase.ui.auth.AuthUI
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
@@ -21,27 +26,35 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+
         // Get the Cloud firestore Instance
         fireBasedb = FirebaseFirestore.getInstance()
 
+
+        // On initial creation, we want to go directly to the login screen
+        // If the user is not currently logged in, the login screen will take us directly
+        // to the registration screen. Where the user can log in or create an authentication.
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        if(currentUser == null) {
+            val myIntent = Intent(this, ActivityLogin::class.java)
+            startActivity(myIntent)
+
+            finish()
+        }
+
+        else{
+
+
         findViewById<Button>(R.id.search_breweries).setOnClickListener {
-
-
-            /*val zipCode = findViewById<EditText>(R.id.enter_zip).text.toString()
-
-            if (zipCode != "" && zipCode.length == 5) {
-                val myIntent = Intent(this, ResultsActivity::class.java)
-                myIntent.putExtra("zipCode", zipCode)
-                startActivity(myIntent)
-            } else if (zipCode == "") {
-                showDialog("Error", "Please enter zipcode")
-            } else
-                showDialog("Error", "Please enter correct zipcode")*/
 
             val myIntent = Intent(this, ResultsActivity::class.java)
             startActivity(myIntent)
         }
-    }      
+        }
+    }
 
     // Open the new Activity so the user can delete a brewery
     fun deleteButton(view: View){
@@ -103,7 +116,55 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    // Create the menu option
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    // Handle when the menu options log out is selected, if it's selected - log the user out
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when(item.itemId){
+            R.id.action_logout->{
+
+                AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener{task->
+
+                        // If the logout button is clicked, logout the user
+                        if(task.isSuccessful){
+                            // Call the splash screen and the splash screen now calls the register
+                            animatedSplashScreen()
+                           // startRegisterActivity() They need to register/log back in
+                        }
+                        else
+                        {
+                            Log.e(TAG, "Task is not successful: ${task.exception}")
+                        }
+                    }
+                true
+            }
+            else->{
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun startRegisterActivity() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+
+        finish()
+    }
+
+    private fun animatedSplashScreen() {
+        val intent = Intent(this, SplashActivity::class.java)
+        startActivity(intent)
+
+        finish()
+    }
 
 }
+
 

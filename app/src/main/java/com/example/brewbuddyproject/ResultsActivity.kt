@@ -4,10 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -20,6 +23,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brewbuddyproject.databinding.ActivityResultsBinding
+import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -63,6 +67,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
         //setContentView(R.layout.activity_results)
 
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -94,7 +99,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.d(TAG, "StringSplit: entry = ${entry.trim()}")
         }
 
-
         val retrofitBuilder = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -105,6 +109,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         //breweryLocationsAPI.getBreweryByZip(searchString, 5).enqueue(object : Callback<List<Brewery>?> {
         //breweryLocationsAPI.getBreweryByLocation("38.8977,77.0365", 5).enqueue(object : Callback<List<Brewery>?> {
         breweryLocationsAPI.getBreweryByCityState(cityStateArray[0].trim(), convertStatetoFullName(cityStateArray[1].trim())).enqueue(object : Callback<List<Brewery>?> {
+
             // If we get a response from the API
             override fun onResponse(call: Call<List<Brewery>?>, response: Response<List<Brewery>?>) {
                 Log.d(TAG, "onResponse: $response")
@@ -149,10 +154,10 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
                 try {
                     val builder = StringBuilder()
                     builder.append(brewery.street)
-                           .append(", ")
-                           .append(brewery.city)
-                           .append(", ")
-                           .append(brewery.state)
+                        .append(", ")
+                        .append(brewery.city)
+                        .append(", ")
+                        .append(brewery.state)
                     Log.d(TAG, "fillDataHoles: $builder")
                     val addressInfo = geocoder.getFromLocationName(builder.toString(), 1)
                     if(!addressInfo.isNullOrEmpty()) {
@@ -343,8 +348,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
-
     /*// Call the brewery function
     fun addBreweryButton(view: View){
         // Get the last position in the Brewery List that was last selected
@@ -394,5 +397,45 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         builder.show()
     }*/
 
+
+    // Create the menu option
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    // Handle when the menu options log out is selected, if it's selected - log the user out
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when(item.itemId){
+            R.id.action_logout->{
+
+                AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener{task->
+
+                        // If the logout button is clicked, logout the user
+                        if(task.isSuccessful){
+                            startRegisterActivity() // They need to register/log back in
+                        }
+                        else
+                        {
+                            Log.e(TAG, "Task is not successful: ${task.exception}")
+                        }
+                    }
+                true
+            }
+            else->{
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun startRegisterActivity() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+
+        finish()
+    }
 
 }

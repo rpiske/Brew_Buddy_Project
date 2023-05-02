@@ -1,12 +1,16 @@
 package com.example.brewbuddyproject
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.firebase.ui.auth.AuthUI
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
@@ -18,6 +22,8 @@ class DeleteBreweryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_delete_brewery)
+
+
 
         // Get the Cloud firestore Instance
         fireBasedb = FirebaseFirestore.getInstance()
@@ -88,4 +94,44 @@ class DeleteBreweryActivity : AppCompatActivity() {
         builder.show()
     }
 
+
+    // Create the menu option
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    // Handle when the menu options log out is selected, if it's selected - log the user out
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when(item.itemId){
+            R.id.action_logout->{
+
+                AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener{task->
+
+                        // If the logout button is clicked, logout the user
+                        if(task.isSuccessful){
+                            startRegisterActivity() // They need to register/log back in
+                        }
+                        else
+                        {
+                            Log.e(TAG, "Task is not successful: ${task.exception}")
+                        }
+                    }
+                true
+            }
+            else->{
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun startRegisterActivity() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+
+        finish()
+    }
 }

@@ -22,12 +22,15 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
 
     private val TAG = "MyRecycleAdapter"
 
+
     inner class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val brewName = itemView.findViewById<TextView>(R.id.brew_name)
         val brewStreet = itemView.findViewById<TextView>(R.id.brew_street)
         val brewCity = itemView.findViewById<TextView>(R.id.brew_city_state)
         val brewPhone = itemView.findViewById<TextView>(R.id.brew_phone)
         val brewWebsite = itemView.findViewById<TextView>(R.id.brew_website)
+
+
     }
 
 
@@ -68,11 +71,13 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
             myIntent.putExtra("brewWebsite", holder.brewWebsite.text)
 
             context.startActivity(myIntent)
+
         }
+
 
         if(selectedItemPosition == position){
             // Change Current Selection to Orange
-            holder.itemView.setBackgroundColor(Color.parseColor("#DC746C"))
+            holder.itemView.setBackgroundColor(Color.parseColor("#f28e1c"))
 
         }
         else
@@ -82,10 +87,10 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
 
         }
     }
-
     // Return the name of the current brewery that is selected
     fun getCurrentBrewerySelection() : Int {
         return selectedItemPosition
     }
+
 
 }
