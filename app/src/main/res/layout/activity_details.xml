@@ -52,6 +52,7 @@
         android:layout_width="381dp"
         android:layout_height="55dp"
         android:layout_marginTop="8dp"
+        android:onClick="websiteButton"
         android:text="Website"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.466"
