@@ -25,6 +25,7 @@ class DetailsActivity : AppCompatActivity() {
     private var recyclerPosition : Int = 0
     private var currentUser: String? = null
     private var passedBrewery : Brewery? = null
+    private var foundID: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,10 +69,13 @@ class DetailsActivity : AppCompatActivity() {
                         Log.d(TAG, "firebaseDB: document.get(\"name\") = ${document.get("name")}")
                         Log.d(TAG, "firebaseDB:  passedBrewery.name = ${passedBrewery?.name}")
                         if (document.get("name") == passedBrewery?.name) {
-                            Log.d(TAG, "fireBaseDB: found matching brewery")
+                            Log.d(TAG, "fireBaseDB: found matching brewery at ${document.id}")
+                            foundID = document.id
+                            findViewById<Button>(R.id.details_brewery_add_to_favs_button).text = "Update Favorite"
                             Log.d(TAG, "fireBaseDB: ${document.get("rating")}")
                             Log.d(TAG, "fireBaseDB: ${document.get("comments")}")
-                            //findViewById<RatingBar>(R.id.details_brewery_rating).rating = document.get("rating")
+                            val tempFloat: Double? = document.getDouble("rating")
+                            findViewById<RatingBar>(R.id.details_brewery_rating).rating = tempFloat?.toFloat()!!
                             findViewById<EditText>(R.id.details_brewery_details_notes).setText(document.get("comments") as String)
                         }
                     }
@@ -119,7 +123,7 @@ class DetailsActivity : AppCompatActivity() {
         // Attach the curent users email address to the dataobject
         if (passedBrewery != null) {
             passedBrewery.user = currentUser.toString() // Add this to the Data Object
-            passedBrewery.rating = 2.5F//findViewById<RatingBar>(R.id.details_brewery_rating).rating.toString()
+            passedBrewery.rating = findViewById<RatingBar>(R.id.details_brewery_rating).rating
             passedBrewery.comments = findViewById<EditText>(R.id.details_brewery_details_notes).text.toString()
         }
         // Getting an instance of our collection
@@ -131,7 +135,9 @@ class DetailsActivity : AppCompatActivity() {
 
         // Adding the data
         if (passedBrewery != null) {
-            breweryDatabase.document(documentId).set(passedBrewery)
+            if(foundID != null)
+                breweryDatabase.document(foundID!!).set(passedBrewery)
+            else breweryDatabase.document(documentId).set(passedBrewery)
         }
 
         if (passedBrewery != null) {
