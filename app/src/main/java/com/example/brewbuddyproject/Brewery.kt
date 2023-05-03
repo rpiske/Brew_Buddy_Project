@@ -1,12 +1,15 @@
 package com.example.brewbuddyproject
 
+import com.bumptech.glide.Glide.init
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /*data class BreweryLocations(
     val results: List<Brewery>
 )*/
 
 data class Brewery(
+
     val name: String,
     val street: String,
     val city: String,
@@ -16,4 +19,4 @@ data class Brewery(
     var latitude: String,
     val phone: String,
     val website_url: String
-)
+) : Serializable
