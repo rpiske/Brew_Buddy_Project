@@ -46,7 +46,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
     val BASE_URL = "https://api.openbrewerydb.org/v1/"
     val breweryLocations = ArrayList<Brewery>()
     val sampleSpot = Brewery("Test Brewery", "test street", "test city",
-    "CT", "06040", "47", "72", "475-226-1717", "www.google.com")
+    "CT", "06040", "47", "72", "475-226-1717", "www.google.com", "Micro", "null", 0.0F, "null")
 
     private val TAG = "ResultsActivity"
 
@@ -182,7 +182,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         for (brewery in breweryLocations) {
             //log these lat/lons and see what we got
             if(brewery.longitude != null) {
-                Log.d(TAG, "updatePins: ${brewery.name} with lon ${brewery.longitude.toDouble()} and lat ${brewery.latitude.toDouble()}")
+                Log.d(TAG, "updatePins: ${brewery.name} with brewtype ${brewery.brewery_type} lon ${brewery.longitude.toDouble()} and lat ${brewery.latitude.toDouble()}")
                 coordinates = LatLng(brewery.latitude.toDouble(), brewery.longitude.toDouble())
                 mMap.addMarker(MarkerOptions().position(coordinates).title("${brewery.name}"))
             }

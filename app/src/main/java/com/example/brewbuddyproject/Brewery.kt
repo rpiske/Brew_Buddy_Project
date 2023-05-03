@@ -18,5 +18,9 @@ data class Brewery(
     var longitude: String,
     var latitude: String,
     val phone: String,
-    val website_url: String
+    val website_url: String,
+    val brewery_type: String,
+    var user : String?,
+    var rating : Float?,
+    var comments : String?
 ) : Serializable

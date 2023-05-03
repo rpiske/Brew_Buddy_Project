@@ -13,7 +13,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
@@ -163,6 +165,11 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
 
         finish()
+    }
+
+    // Return the current users email
+    private fun getCurrentUser() : String? {
+        return Firebase.auth.currentUser?.email.toString()
     }
 
 }
