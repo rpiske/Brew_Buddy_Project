@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.net.toUri
 
 class DetailsActivity : AppCompatActivity() {
 
@@ -29,14 +30,19 @@ class DetailsActivity : AppCompatActivity() {
         Log.d(TAG, "breweryPhone: $brewPhone")
 
         findViewById<TextView>(R.id.details_brewery_name).text = brewName.toString()
-        findViewById<TextView>(R.id.details_brewery_addresss).text = brewStreet.toString() + ", " + brewCity.toString()
+        findViewById<TextView>(R.id.details_brewery_addresss).text = brewStreet.toString() + ", " + brewCity.toString() + "," + brewWebsite.toString()
         findViewById<TextView>(R.id.details_brewery_phone_number).text = "Phone: " + brewPhone.toString()
-
-
     }
 
-    fun websiteButton(view: View){
-        val i = Intent(Intent.ACTION_VIEW, Uri.parse(intent.getStringExtra("brewWebsite")))
-        startActivity(i)
+    fun websiteButton(view: View) {
+        val browserIntent = Intent(Intent.ACTION_VIEW)
+        browserIntent.data = Uri.parse(intent.getStringExtra("brewWebsite"))
+        startActivity(browserIntent)
+    }
+
+    fun phoneNumberCall(view: View) {
+        val callIntent = Intent(Intent.ACTION_CALL)
+        callIntent.data = Uri.parse("tel:" + intent.getStringExtra("brewPhone"))
+        startActivity(callIntent)
     }
 }
