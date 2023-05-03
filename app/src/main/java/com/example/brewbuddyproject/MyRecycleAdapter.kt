@@ -58,6 +58,8 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
         holder.brewWebsite.text = breweryLocations[position].website_url
 
 
+
+
         holder.itemView.setOnClickListener {
             selectedItemPosition = position
             notifyDataSetChanged()
@@ -69,6 +71,10 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
             myIntent.putExtra("brewCity", holder.brewCity.text)
             myIntent.putExtra("brewPhone", holder.brewPhone.text)
             myIntent.putExtra("brewWebsite", holder.brewWebsite.text)
+            myIntent.putExtra("position", selectedItemPosition)
+            val brewery = breweryLocations[selectedItemPosition]
+
+            myIntent.putExtra("passedBrewery", brewery)
 
             context.startActivity(myIntent)
 

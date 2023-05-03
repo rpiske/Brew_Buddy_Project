@@ -77,7 +77,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         fireBasedb = FirebaseFirestore.getInstance()
 
         //val zipCode = intent.getSerializableExtra("zipCode") as String
-        breweryLocations.add(sampleSpot)
+       // breweryLocations.add(sampleSpot)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         myRecycleAdapter = MyRecycleAdapter(breweryLocations, this)
