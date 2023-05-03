@@ -55,6 +55,11 @@ class DetailsActivity : AppCompatActivity() {
 
     }
 
+    fun backButton(view: View) {
+        Log.d(TAG, "backButton: inside")
+        finish()
+    }
+
     fun websiteButton(view: View){
         val i = Intent(Intent.ACTION_VIEW, Uri.parse(intent.getStringExtra("brewWebsite")))
         startActivity(i)
@@ -107,4 +112,6 @@ class DetailsActivity : AppCompatActivity() {
         builder.setMessage(Message)
         builder.show()
     }
+
+    
 }
