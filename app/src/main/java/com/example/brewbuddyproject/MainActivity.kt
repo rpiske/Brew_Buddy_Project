@@ -66,11 +66,12 @@ class MainActivity : AppCompatActivity() {
 
     // View a record of all the Breweries
     fun viewFavorites(view: View){
-        viewAllBreweries()
+        val myIntent = Intent(this, FavoritesActivity::class.java)
+        startActivity(myIntent)
     }
 
 
-    private fun viewAllBreweries(){
+    /*private fun viewAllBreweries(){
 
         // Retrieve data
         fireBasedb.collection("breweries")
@@ -81,21 +82,45 @@ class MainActivity : AppCompatActivity() {
                 val buffer = StringBuffer()
 
                 for(document in documents){
-                    Log.d(TAG, "${document.id} => ${document.data}")
+                    if (document.get("user") == getCurrentUser()) {
+                        Log.d(TAG, "${document.id} => ${document.data}")
 
-                    Log.d(TAG, "Brewery: ${document.get("name")}, ${document.get("street")}, ${document.get("city")}," +
-                            "${document.get("state")}, ${document.get("zip")}, ${document.get("phone")}, " +
-                            "${document.get("website_url")}  ")
+                        Log.d(
+                            TAG,
+                            "Brewery: ${document.get("name")}, ${document.get("street")}, ${
+                                document.get("city")
+                            }," +
+                                    "${document.get("state")}, ${document.get("zip")}, ${
+                                        document.get(
+                                            "phone"
+                                        )
+                                    }, " +
+                                    "${document.get("website_url")}  "
+                        )
+                        *//*val tempBrewery = Brewery("${document.get("name")}",
+                            "${document.get("street")}",
+                            "${document.get("city")}",
+                            "${document.get("state")}",
+                            "${document.get("zip")}",
+                            "null",
+                            "null",
+                            "${document.get("phone")}",
+                            "${document.get("website_url")}",
+                            "${document.get("brewery_type")}",
+                            "${document.get("user")}",
+                            0.0F,
+                            "${document.get("comments")}")
 
-
-                    buffer.append("Name : ${document.get("name")}" + "\n")
-                    buffer.append("Street : ${document.get("street")}" + "\n")
-                    buffer.append("City : ${document.get("city")}" + "\n")
-                    buffer.append("State : ${document.get("state")}" + "\n")
-                    buffer.append("Zip : ${document.get("zip")}" + "\n")
-                    buffer.append("Phone : ${document.get("phone")}" + "\n")
-                    buffer.append("Website : ${document.get("website_url")}" + "\n\n")
-
+                            favoriteLocations.add(tempBrewery)
+                        *//*
+                        buffer.append("Name : ${document.get("name")}" + "\n")
+                        buffer.append("Street : ${document.get("street")}" + "\n")
+                        buffer.append("City : ${document.get("city")}" + "\n")
+                        buffer.append("State : ${document.get("state")}" + "\n")
+                        buffer.append("Zip : ${document.get("zip")}" + "\n")
+                        buffer.append("Phone : ${document.get("phone")}" + "\n")
+                        buffer.append("Website : ${document.get("website_url")}" + "\n\n")
+                    }
                 }
                 // Show the listing of breweries
                 showDialog("Brewery Listing: ", buffer.toString())
@@ -104,7 +129,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Error getting documents")
                 showDialog("Error", "Error getting breweries")
             }
-    }
+    }*/
     private fun showDialog(title : String,Message : String){
         val builder = AlertDialog.Builder(this)
         builder.setCancelable(true)

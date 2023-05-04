@@ -137,7 +137,10 @@ class DetailsActivity : AppCompatActivity() {
         if (passedBrewery != null) {
             if(foundID != null)
                 breweryDatabase.document(foundID!!).set(passedBrewery)
-            else breweryDatabase.document(documentId).set(passedBrewery)
+            else {
+                foundID = documentId
+                breweryDatabase.document(documentId).set(passedBrewery)
+            }
         }
 
         if (passedBrewery != null) {
