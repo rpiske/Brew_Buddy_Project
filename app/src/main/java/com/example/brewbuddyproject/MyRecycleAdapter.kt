@@ -1,28 +1,25 @@
 package com.example.brewbuddyproject
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
+
 
 class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private val context: Context): RecyclerView.Adapter<MyRecycleAdapter.MyViewHolder>() {
 
     var counter = 1
     var selectedItemPosition: Int = -1 // -1 means that nothing was selected
+    private lateinit var fireBasedb: FirebaseFirestore
 
     private val TAG = "MyRecycleAdapter"
 
@@ -94,10 +91,13 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
                 myIntent.putExtra("passedBrewery", brewery)
 
                 context.startActivity(myIntent)
-            } else{} // This implies we are in the favoritesAdapter and this should handle deletion
+            } else{
+
+            } // This implies we are in the favoritesAdapter and this should handle deletion
 
         }
 
+        // Deletion Code
         holder.itemView.setOnLongClickListener {
             val fireBasedb = FirebaseFirestore.getInstance()
             var foundID:String? = null
@@ -127,7 +127,17 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
                             //if(state == "favoritesAdapter") //only remove from list in FAVORITES view
                                 notifyItemRemoved(position)
                                 notifyDataSetChanged()
+
+                            // Check that this is in the favoritesAdapter
+                            if(state == "favoritesAdapter"){
+                                if(isEmpty()){ // If the arrayList is empty then we want to pop back to the main menu
+                                    (context as Activity).finish() // Pop the favorites and go back to main menu if empty
+                                }
+                            }
+
                             Toast.makeText(context, "Brewery Deleted!", Toast.LENGTH_SHORT).show()
+
+
                         }
                         builder.setNegativeButton("No") { dialog, which ->
 
@@ -177,5 +187,14 @@ class MyRecycleAdapter(private val breweryLocations: ArrayList<Brewery>, private
         state = newState
     }
 
+   private fun isEmpty() : Boolean{
+
+        if(state == "favoritesAdapter"){
+            if(breweryLocations.size == 0){
+                return true
+            }
+        }
+            return false
+    }
 
 }

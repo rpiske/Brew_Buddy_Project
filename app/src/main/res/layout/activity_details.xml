@@ -8,13 +8,13 @@
 
     <ImageView
         android:id="@+id/details_brewery_image"
-        android:layout_width="125dp"
-        android:layout_height="115dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="126dp"
+        android:layout_height="105dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_local_drink_24" />
+        app:srcCompat="@drawable/beer" />
 
     <TextView
         android:id="@+id/details_brewery_phone_number"

@@ -65,13 +65,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     // View a record of all the Breweries
-    fun viewFavorites(view: View){
-        val myIntent = Intent(this, FavoritesActivity::class.java)
-        startActivity(myIntent)
-    }
+    fun viewFavorites(view: View) {
+       // val myIntent = Intent(this, FavoritesActivity::class.java)
+     //   startActivity(myIntent)
 
+        var isEmpty : Boolean = true
 
-    /*private fun viewAllBreweries(){
+        // Get the Cloud firestore Instance
+        fireBasedb = FirebaseFirestore.getInstance()
 
         // Retrieve data
         fireBasedb.collection("breweries")
@@ -81,55 +82,31 @@ class MainActivity : AppCompatActivity() {
 
                 val buffer = StringBuffer()
 
-                for(document in documents){
+                for (document in documents) {
                     if (document.get("user") == getCurrentUser()) {
                         Log.d(TAG, "${document.id} => ${document.data}")
-
-                        Log.d(
-                            TAG,
-                            "Brewery: ${document.get("name")}, ${document.get("street")}, ${
-                                document.get("city")
-                            }," +
-                                    "${document.get("state")}, ${document.get("zip")}, ${
-                                        document.get(
-                                            "phone"
-                                        )
-                                    }, " +
-                                    "${document.get("website_url")}  "
-                        )
-                        *//*val tempBrewery = Brewery("${document.get("name")}",
-                            "${document.get("street")}",
-                            "${document.get("city")}",
-                            "${document.get("state")}",
-                            "${document.get("zip")}",
-                            "null",
-                            "null",
-                            "${document.get("phone")}",
-                            "${document.get("website_url")}",
-                            "${document.get("brewery_type")}",
-                            "${document.get("user")}",
-                            0.0F,
-                            "${document.get("comments")}")
-
-                            favoriteLocations.add(tempBrewery)
-                        *//*
-                        buffer.append("Name : ${document.get("name")}" + "\n")
-                        buffer.append("Street : ${document.get("street")}" + "\n")
-                        buffer.append("City : ${document.get("city")}" + "\n")
-                        buffer.append("State : ${document.get("state")}" + "\n")
-                        buffer.append("Zip : ${document.get("zip")}" + "\n")
-                        buffer.append("Phone : ${document.get("phone")}" + "\n")
-                        buffer.append("Website : ${document.get("website_url")}" + "\n\n")
+                            isEmpty = false
                     }
+                       // If we find one instance where the the users emails matches, we must display those breweries
+                        if(!isEmpty){
+                            val myIntent = Intent(this, FavoritesActivity::class.java)
+                             startActivity(myIntent)
+                            break // Break out the loop THIS IS IMPORTANT
+
+                        }
+
+                } // End of Loop
+
+                // After every iteration has shown that none of the user names matched
+                // This must mean that isEmpty() is true and we should prompt the user
+                if(isEmpty){
+
+                    showDialog("Error", "There are no favorites to display")
                 }
-                // Show the listing of breweries
-                showDialog("Brewery Listing: ", buffer.toString())
             }
-            .addOnFailureListener{
-                Log.d(TAG, "Error getting documents")
-                showDialog("Error", "Error getting breweries")
-            }
-    }*/
+    }
+
+
     private fun showDialog(title : String,Message : String){
         val builder = AlertDialog.Builder(this)
         builder.setCancelable(true)

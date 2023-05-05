@@ -3,6 +3,7 @@ package com.example.brewbuddyproject
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,7 +40,6 @@ class FavoritesActivity : AppCompatActivity() {
                     if (document.get("user") == getCurrentUser()) {
                         Log.d(TAG, "${document.id} => ${document.data}")
 
-
                         Log.d(
                             TAG,
                             "Brewery: ${document.get("name")}, ${document.get("street")}, ${
@@ -54,20 +54,23 @@ class FavoritesActivity : AppCompatActivity() {
                         )
 
                         // Convert the data pulled into a brewery object inside an array
-                        favoriteLocations.add(Brewery(
-                            "${document.get("name")}",
-                            "${document.get("street")}",
-                            "${document.get("city")}",
-                            "${document.get("state")}",
-                            "${document.get("zip")}",
-                            "null",
-                            "null",
-                            "${document.get("phone")}",
-                            "${document.get("website_url")}",
-                            "${document.get("brewery_type")}",
-                            "null",
-                            0.0f,
-                            "${document.get("comments")}"))
+                        favoriteLocations.add(
+                            Brewery(
+                                "${document.get("name")}",
+                                "${document.get("street")}",
+                                "${document.get("city")}",
+                                "${document.get("state")}",
+                                "${document.get("zip")}",
+                                "null",
+                                "null",
+                                "${document.get("phone")}",
+                                "${document.get("website_url")}",
+                                "${document.get("brewery_type")}",
+                                "null",
+                                0.0f,
+                                "${document.get("comments")}"
+                            )
+                        )
 
 
                     }
@@ -79,8 +82,12 @@ class FavoritesActivity : AppCompatActivity() {
                     myRecycleAdapter.setState("favoritesAdapter") // Set the state for specific functionality
                     recyclerView.adapter = myRecycleAdapter
                     recyclerView.layoutManager = LinearLayoutManager(this)
-                    recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-
+                    recyclerView.addItemDecoration(
+                        DividerItemDecoration(
+                            this,
+                            DividerItemDecoration.VERTICAL
+                        )
+                    )
 
                 }
             }
