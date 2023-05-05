@@ -6,7 +6,9 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
 import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -59,9 +61,14 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var locationPermissionGranted = false
 
+    private var lastKnownLocation: Location? = null
+
+    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
+
+    private val DEFAULT_ZOOM = 10
+
     // provides a way to convert a physical address into geographic coordinates (latitude and longitude)
     private lateinit var geocoder: Geocoder
-
 
     // an arbitrary number request code to be used when requesting permission to access the device's location.
     private val ACCESS_LOCATION_CODE = 123
@@ -72,6 +79,9 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
         //setContentView(R.layout.activity_results)
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        geocoder = Geocoder(this)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -81,13 +91,9 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         /*Places.initialize(applicationContext, getString(R.string.maps_api_key))
         placesClient = Places.createClient(this)*/
 
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
         // Get the Cloud firestore Instance
         fireBasedb = FirebaseFirestore.getInstance()
 
-        //val zipCode = intent.getSerializableExtra("zipCode") as String
-       // breweryLocations.add(sampleSpot)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         myRecycleAdapter = MyRecycleAdapter(breweryLocations, this)
@@ -97,8 +103,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         recyclerView.adapter = myRecycleAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-
-        //pingBreweryAPI(breweryLocations[0].zip) //temp search location
     } // End of OnCreate Method
 
     fun pingBreweryAPI(searchString: String) {
@@ -143,14 +147,8 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
                 //Log.d(TAG, "onResponse: inside onResponse")
                 myRecycleAdapter.notifyDataSetChanged()
                 if(mMap != null)
-                //how do we wait for pingBreweryAPI to finish and update breweryLocations??
                     updatePins()
                 else Log.d(TAG, "searchButton: nMap is null")
-                //Log.d(TAG, "a: ${breweryLocations[0].street}")
-                //Log.d(TAG, "b: ${breweryLocations[1].name}")
-                //Log.d(TAG, "c: ${breweryLocations[2].name}")
-
-
             }
 
             override fun onFailure(call: Call<List<Brewery>?>, t: Throwable) {
@@ -161,7 +159,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     @Suppress("DEPRECATION")
     fun fillDataHoles() {
-        geocoder = Geocoder(this)
         for ( (index, brewery) in breweryLocations.withIndex()) {
             if(brewery.longitude == null || brewery.longitude == null) {
                 try {
@@ -200,8 +197,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
                 mMap.addMarker(MarkerOptions().position(coordinates).title("${brewery.name}"))
             }
         }
-        //mMap.addMarker(MarkerOptions().position(hartford).title("Test Location"))
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hartford, 12F))
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, 10F)
         mMap.animateCamera(cameraUpdate)
     }
@@ -228,34 +223,25 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
         var hartford = LatLng(41.7659,-72.681)
-        //mMap.addMarker(MarkerOptions().position(hartford).title("Hartford"))
-
-        //this of course is happening too soon. no locations returned by API yet
-        //if (breweryLocations.isNotEmpty()) {
-        /*for (brewery in breweryLocations) {
-            //log these lat/lons and see what we got
-            Log.d(TAG, "onMapReady: ${brewery.name}, Lat=${brewery.latitude}, Lon=${brewery.longitude}")
-            val coordinates = LatLng(brewery.latitude.toDouble(), brewery.longitude.toDouble())
-            mMap.addMarker(MarkerOptions().position(coordinates).title("${brewery.name}"))
-        }*/
-        //}
-        //this zoom is not doing anything
-        //mMap.moveCamera(CameraUpdateFactory.zoomBy(500.0F))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(hartford))
-
-
 
         // Request location permission and show user's current location on the Map
         getLocationPermission()
-        //updatePins()
+        getDeviceLocation()
     }
 
-    /*@SuppressLint("MissingPermission")
+    fun getCityStateFromLatLon(): MutableList<Address>? {
+
+        Log.d(TAG, "getCityStateFromLatLon: lastKnownLocation(lat)=${lastKnownLocation?.latitude} lastKnowLocation(lon)=${lastKnownLocation?.longitude}")
+        val addressInfo = geocoder.getFromLocation(lastKnownLocation!!.latitude, lastKnownLocation!!.longitude, 1)
+        return addressInfo
+    }
+
+    @SuppressLint("MissingPermission")
     private fun getDeviceLocation() {
-        *//*
+        /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
-         *//*
+         */
         try {
             if (locationPermissionGranted) {
                 val locationResult = fusedLocationProviderClient.lastLocation
@@ -264,9 +250,12 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
                         // Set the map's camera position to the current location of the device.
                         lastKnownLocation = task.result
                         if (lastKnownLocation != null) {
-                            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                 LatLng(lastKnownLocation!!.latitude,
                                     lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                            val addressInfo = getCityStateFromLatLon()
+                            Log.d(TAG, "getDeviceLocation: string to send ${addressInfo?.get(0)?.locality}, ${addressInfo?.get(0)?.adminArea}")
+                            pingBreweryAPI("${addressInfo?.get(0)?.locality}, ${addressInfo?.get(0)?.adminArea}")
                         }
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.")
@@ -280,7 +269,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)
         }
-    }*/
+    }
 
     private fun getLocationPermission() {
 
