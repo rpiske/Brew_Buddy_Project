@@ -22,7 +22,11 @@
         android:theme="@style/Theme.BrewBuddyProject"
         tools:targetApi="31">
         <activity
+<<<<<<< Updated upstream
             android:name=".FavoritesActivity"
+=======
+            android:name=".CameraActivity"
+>>>>>>> Stashed changes
             android:exported="false" />
         <activity
             android:name=".SplashActivity"
