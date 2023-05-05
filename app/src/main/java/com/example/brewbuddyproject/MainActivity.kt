@@ -13,7 +13,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,12 +65,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     // View a record of all the Breweries
-    fun viewFavorites(view: View){
-        viewAllBreweries()
-    }
+    fun viewFavorites(view: View) {
+       // val myIntent = Intent(this, FavoritesActivity::class.java)
+     //   startActivity(myIntent)
 
+        var isEmpty : Boolean = true
 
-    private fun viewAllBreweries(){
+        // Get the Cloud firestore Instance
+        fireBasedb = FirebaseFirestore.getInstance()
 
         // Retrieve data
         fireBasedb.collection("breweries")
@@ -78,31 +82,31 @@ class MainActivity : AppCompatActivity() {
 
                 val buffer = StringBuffer()
 
-                for(document in documents){
-                    Log.d(TAG, "${document.id} => ${document.data}")
+                for (document in documents) {
+                    if (document.get("user") == getCurrentUser()) {
+                        Log.d(TAG, "${document.id} => ${document.data}")
+                            isEmpty = false
+                    }
+                       // If we find one instance where the the users emails matches, we must display those breweries
+                        if(!isEmpty){
+                            val myIntent = Intent(this, FavoritesActivity::class.java)
+                             startActivity(myIntent)
+                            break // Break out the loop THIS IS IMPORTANT
 
-                    Log.d(TAG, "Brewery: ${document.get("name")}, ${document.get("street")}, ${document.get("city")}," +
-                            "${document.get("state")}, ${document.get("zip")}, ${document.get("phone")}, " +
-                            "${document.get("website_url")}  ")
+                        }
 
+                } // End of Loop
 
-                    buffer.append("Name : ${document.get("name")}" + "\n")
-                    buffer.append("Street : ${document.get("street")}" + "\n")
-                    buffer.append("City : ${document.get("city")}" + "\n")
-                    buffer.append("State : ${document.get("state")}" + "\n")
-                    buffer.append("Zip : ${document.get("zip")}" + "\n")
-                    buffer.append("Phone : ${document.get("phone")}" + "\n")
-                    buffer.append("Website : ${document.get("website_url")}" + "\n\n")
+                // After every iteration has shown that none of the user names matched
+                // This must mean that isEmpty() is true and we should prompt the user
+                if(isEmpty){
 
+                    showDialog("Error", "There are no favorites to display")
                 }
-                // Show the listing of breweries
-                showDialog("Brewery Listing: ", buffer.toString())
-            }
-            .addOnFailureListener{
-                Log.d(TAG, "Error getting documents")
-                showDialog("Error", "Error getting breweries")
             }
     }
+
+
     private fun showDialog(title : String,Message : String){
         val builder = AlertDialog.Builder(this)
         builder.setCancelable(true)
@@ -163,6 +167,11 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
 
         finish()
+    }
+
+    // Return the current users email
+    private fun getCurrentUser() : String? {
+        return Firebase.auth.currentUser?.email.toString()
     }
 
 }

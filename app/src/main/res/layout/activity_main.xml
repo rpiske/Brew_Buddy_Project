@@ -24,43 +24,22 @@
         android:layout_width="243dp"
         android:layout_height="66dp"
         android:layout_marginTop="92dp"
-        android:layout_marginBottom="66dp"
         android:text="Search for Breweries!"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/deleteBreweryButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <Button
         android:id="@+id/viewFavoritesButton"
-        android:layout_width="145dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginTop="79dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginBottom="94dp"
+        android:layout_width="204dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="12dp"
         android:onClick="viewFavorites"
-        android:text="View Favorites"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/deleteBreweryButton"
+        android:text="View Favorites/Delete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_breweries" />
-
-    <Button
-        android:id="@+id/deleteBreweryButton"
-        android:layout_width="131dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="19dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="92dp"
-        android:onClick="deleteButton"
-        android:text="Delete Brewery"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/viewFavoritesButton"
-        app:layout_constraintTop_toTopOf="@+id/viewFavoritesButton"
-        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/imageView"

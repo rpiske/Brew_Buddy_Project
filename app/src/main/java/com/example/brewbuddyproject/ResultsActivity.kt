@@ -30,6 +30,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import retrofit2.Call
@@ -46,7 +48,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
     val BASE_URL = "https://api.openbrewerydb.org/v1/"
     val breweryLocations = ArrayList<Brewery>()
     val sampleSpot = Brewery("Test Brewery", "test street", "test city",
-    "CT", "06040", "47", "72", "475-226-1717", "www.google.com")
+    "CT", "06040", "47", "72", "475-226-1717", "www.google.com", "Micro", "null", 0.0F, "null")
 
     private val TAG = "ResultsActivity"
 
@@ -54,9 +56,12 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityResultsBinding
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var locationPermissionGranted = false
 
     // provides a way to convert a physical address into geographic coordinates (latitude and longitude)
     private lateinit var geocoder: Geocoder
+
 
     // an arbitrary number request code to be used when requesting permission to access the device's location.
     private val ACCESS_LOCATION_CODE = 123
@@ -73,6 +78,11 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        /*Places.initialize(applicationContext, getString(R.string.maps_api_key))
+        placesClient = Places.createClient(this)*/
+
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
         // Get the Cloud firestore Instance
         fireBasedb = FirebaseFirestore.getInstance()
 
@@ -81,6 +91,9 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         myRecycleAdapter = MyRecycleAdapter(breweryLocations, this)
+
+        // Set the recyclers state to show are in the favoritesAdapter so it'll perform that functionality
+        myRecycleAdapter.setState("resultsAdapter")
         recyclerView.adapter = myRecycleAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
@@ -182,7 +195,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         for (brewery in breweryLocations) {
             //log these lat/lons and see what we got
             if(brewery.longitude != null) {
-                Log.d(TAG, "updatePins: ${brewery.name} with lon ${brewery.longitude.toDouble()} and lat ${brewery.latitude.toDouble()}")
+                Log.d(TAG, "updatePins: ${brewery.name} with brewtype ${brewery.brewery_type} lon ${brewery.longitude.toDouble()} and lat ${brewery.latitude.toDouble()}")
                 coordinates = LatLng(brewery.latitude.toDouble(), brewery.longitude.toDouble())
                 mMap.addMarker(MarkerOptions().position(coordinates).title("${brewery.name}"))
             }
@@ -237,6 +250,38 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         //updatePins()
     }
 
+    /*@SuppressLint("MissingPermission")
+    private fun getDeviceLocation() {
+        *//*
+         * Get the best and most recent location of the device, which may be null in rare
+         * cases when a location is not available.
+         *//*
+        try {
+            if (locationPermissionGranted) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.result
+                        if (lastKnownLocation != null) {
+                            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                LatLng(lastKnownLocation!!.latitude,
+                                    lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                        }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.")
+                        Log.e(TAG, "Exception: %s", task.exception)
+                        mMap?.moveCamera(CameraUpdateFactory
+                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                        mMap?.uiSettings?.isMyLocationButtonEnabled = false
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }*/
+
     private fun getLocationPermission() {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -280,6 +325,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     private fun enableUserLocation() {
+        locationPermissionGranted = true
         mMap.isMyLocationEnabled = true
     }
 
