@@ -41,20 +41,22 @@ import java.util.Locale
 
 typealias LumaListener = (luma: Double) -> Unit
 
+//Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#1
 class CameraActivity : AppCompatActivity() {
 
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#1
     private lateinit var viewBinding: ActivityCameraBinding
     private lateinit var cameraExecutor: ExecutorService
-
     private var imageCapture: ImageCapture? = null
 
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
         // Request camera permissions, if it has permissions it starts the camera, if not it starts a compat asking for permissions
-        if (allPermissionsGranted()) {
+        if (checkIfCameraPermissionGranted()) {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
@@ -65,11 +67,13 @@ class CameraActivity : AppCompatActivity() {
     }
 
     //Upon destruction of the activity is shuts down the camera
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
 
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#5
     fun takePhoto(view: View) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
@@ -92,8 +96,7 @@ class CameraActivity : AppCompatActivity() {
                 contentValues)
             .build()
 
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
+        // Set up image capture listener, which is triggered after photo has been taken
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(this),
@@ -102,8 +105,7 @@ class CameraActivity : AppCompatActivity() {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults){
+                override fun onImageSaved(output: ImageCapture.OutputFileResults){
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
@@ -112,6 +114,9 @@ class CameraActivity : AppCompatActivity() {
         )
     }
 
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#3
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#4
+    //Code to start up the preview
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -119,14 +124,16 @@ class CameraActivity : AppCompatActivity() {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Preview
+            // This code builds the preview
             val preview = Preview.Builder()
                 .build()
                 .also {
                     it.setSurfaceProvider(viewBinding.cameraViewFinder.surfaceProvider)
                 }
 
-            // Select back camera as a default
+            imageCapture = ImageCapture.Builder().build()
+
+            // Sets the rear camera to the default camera
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
@@ -135,7 +142,7 @@ class CameraActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview)
+                    this, cameraSelector, preview, imageCapture)
 
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -144,12 +151,15 @@ class CameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+    //Method that checks if permissions were granted
+    ////Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
+    private fun checkIfCameraPermissionGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     //File format for taking a photo
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
     companion object {
         private const val TAG = "CameraXApp"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -157,7 +167,6 @@ class CameraActivity : AppCompatActivity() {
         private val REQUIRED_PERMISSIONS =
             mutableListOf (
                 Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -165,17 +174,18 @@ class CameraActivity : AppCompatActivity() {
             }.toTypedArray()
     }
 
+    //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
     //If request was approved start the camera, if not toast that permissions werent given
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
         IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
+            if (checkIfCameraPermissionGranted()) {
                 startCamera()
             } else {
                 Toast.makeText(this,
-                    "Permissions not granted by the user.",
+                    "Camera permission wasn't granted.",
                     Toast.LENGTH_SHORT).show()
                 finish()
             }
