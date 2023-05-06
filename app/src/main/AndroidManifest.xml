@@ -15,7 +15,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.BrewBuddyProject"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".WebActivity"
+            android:exported="false" />
         <activity
             android:name=".FavoritesActivity"
             android:exported="false" />

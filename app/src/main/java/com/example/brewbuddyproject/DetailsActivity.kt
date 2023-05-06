@@ -92,8 +92,10 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     fun websiteButton(view: View){
-        val i = Intent(Intent.ACTION_VIEW, Uri.parse(intent.getStringExtra("brewWebsite")))
-        startActivity(i)
+        val myIntent = Intent(this, WebActivity::class.java)
+
+        myIntent.putExtra("brewWebsite", passedBrewery?.website_url)
+        this.startActivity(myIntent)
     }
 
 
