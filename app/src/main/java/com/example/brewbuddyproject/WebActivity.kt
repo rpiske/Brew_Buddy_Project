@@ -1,3 +1,5 @@
+//cs414s23, (Accessed: May 5, 2023)WebViewExample, (Version: April 29, 2023)https://github.com/cs414s23/WebViewExample
+
 package com.example.brewbuddyproject
 
 import android.annotation.SuppressLint
@@ -17,6 +19,7 @@ class WebActivity : AppCompatActivity() {
     private val urlStack = ArrayDeque<String>()
     lateinit var webView: WebView
 
+    //cs414s23, (Accessed: May 5, 2023)WebViewExample, (Version: April 29, 2023)https://github.com/cs414s23/WebViewExample
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,7 @@ class WebActivity : AppCompatActivity() {
         }
     }
 
+    //cs414s23, (Accessed: May 5, 2023)WebViewExample, (Version: April 29, 2023)https://github.com/cs414s23/WebViewExample
     //Functionality for webview search
     fun searchFunctionality(url: String?){
         //checks if url is empty or null
@@ -55,6 +59,7 @@ class WebActivity : AppCompatActivity() {
         }
     }
 
+    //cs414s23, (Accessed: May 5, 2023)WebViewExample, (Version: April 29, 2023)https://github.com/cs414s23/WebViewExample
     //Searches based on url in edit text whe search button is clicked
     fun search(view: View){
       searchFunctionality(findViewById<EditText>(R.id.web_url_edit_text).editableText.toString())

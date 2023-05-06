@@ -1,5 +1,8 @@
-//Much of this code was sourced or is based off of the official android CameraX documentation page:
-//https://developer.android.com/codelabs/camerax-getting-started#1
+//Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#1
+//Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
+//Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#3
+//Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#4
+//Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#5
 
 package com.example.brewbuddyproject
 
@@ -11,31 +14,17 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ImageCapture
-import androidx.camera.video.Recorder
-import androidx.camera.video.Recording
-import androidx.camera.video.VideoCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import android.widget.Toast
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.core.Preview
 import androidx.camera.core.CameraSelector
 import android.util.Log
 import android.view.View
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.video.FallbackStrategy
-import androidx.camera.video.MediaStoreOutputOptions
-import androidx.camera.video.Quality
-import androidx.camera.video.QualitySelector
-import androidx.camera.video.VideoRecordEvent
-import androidx.core.content.PermissionChecker
 import com.example.brewbuddyproject.databinding.ActivityCameraBinding
-import com.example.brewbuddyproject.databinding.ActivityMainBinding
-import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -57,13 +46,11 @@ class CameraActivity : AppCompatActivity() {
 
         // Request camera permissions, if it has permissions it starts the camera, if not it starts a compat asking for permissions
         if (checkIfCameraPermissionGranted()) {
-            startCamera()
+            startCameraPreview()
         } else {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-
-        //viewBinding.cameraTakePictureButton.setOnClickListener { takePhoto() }
     }
 
     //Upon destruction of the activity is shuts down the camera
@@ -74,11 +61,11 @@ class CameraActivity : AppCompatActivity() {
     }
 
     //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#5
+    //Functionality for taking the photo and storing it in the media
     fun takePhoto(view: View) {
-        // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
-        // Create time stamped name and MediaStore entry.
+        // Adds photo to the storage
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
@@ -96,7 +83,6 @@ class CameraActivity : AppCompatActivity() {
                 contentValues)
             .build()
 
-        // Set up image capture listener, which is triggered after photo has been taken
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(this),
@@ -112,16 +98,18 @@ class CameraActivity : AppCompatActivity() {
                 }
             }
         )
+        
+        //Kills the camera activity after the picture was taken
+        finish()
     }
 
     //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#3
     //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#4
     //Code to start up the preview
-    private fun startCamera() {
+    private fun startCameraPreview() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // This code builds the preview
@@ -136,14 +124,12 @@ class CameraActivity : AppCompatActivity() {
             // Sets the rear camera to the default camera
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
+            //Binds camera to the lifecycle
             try {
-                // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
-
-                // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture)
-
+            //Throws an exception if the binding fails
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
@@ -175,14 +161,14 @@ class CameraActivity : AppCompatActivity() {
     }
 
     //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
-    //If request was approved start the camera, if not toast that permissions werent given
+    //If request was approved start the camera, if not gives toast message that camera permission was not given
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
         IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (checkIfCameraPermissionGranted()) {
-                startCamera()
+                startCameraPreview()
             } else {
                 Toast.makeText(this,
                     "Camera permission wasn't granted.",
