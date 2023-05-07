@@ -10,80 +10,11 @@
         android:id="@+id/details_brewery_image"
         android:layout_width="126dp"
         android:layout_height="105dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/beer" />
-
-    <TextView
-        android:id="@+id/details_brewery_phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Phone: 7777777777"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_addresss" />
-
-    <RatingBar
-        android:id="@+id/details_brewery_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_type" />
-
-    <EditText
-        android:id="@+id/details_brewery_details_notes"
-        android:layout_width="0dp"
-        android:layout_height="145dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="12dp"
-        android:hint="Leave some comments..."
-        android:singleLine="false"
-        android:textAlignment="viewStart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_phone_number" />
-
-    <Button
-        android:id="@+id/details_brewery_website_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="websiteButton"
-        android:text="Website"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_details_notes" />
-
-    <TextView
-        android:id="@+id/details_brewery_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="104dp"
-        android:text="Type: micro"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_name" />
-
-    <TextView
-        android:id="@+id/details_brewery_addresss"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Street, City, State"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_rating" />
 
     <TextView
         android:id="@+id/details_brewery_name"
@@ -98,30 +29,129 @@
         app:layout_constraintStart_toEndOf="@+id/details_brewery_image"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/details_brewery_add_to_favs_button"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/details_brewery_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="104dp"
+        android:text="Type: micro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_name" />
+
+    <RatingBar
+        android:id="@+id/details_brewery_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_type" />
+
+    <TextView
+        android:id="@+id/details_brewery_num_ratings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="18dp"
+        android:text="(# Ratings)"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_rating" />
+
+    <TextView
+        android:id="@+id/details_brewery_addresss"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="addBreweryButton"
-        android:text="Add to Favorites"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Street, City, State"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_website_button" />
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_rating" />
+
+    <TextView
+        android:id="@+id/details_brewery_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Phone: 7777777777"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_addresss" />
+
+    <EditText
+        android:id="@+id/details_enter_comment_textbox"
+        android:layout_width="266dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Enter comment"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_phone_number" />
 
     <Button
-        android:id="@+id/details_brewery_back_button"
-        android:layout_width="0dp"
+        android:id="@+id/details_submit_comment_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="53dp"
         android:layout_marginEnd="16dp"
-        android:onClick="backButton"
-        android:text="Back"
+        android:onClick="commentButton"
+        android:text="Comment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/details_enter_comment_textbox"
+        app:layout_constraintTop_toBottomOf="@+id/details_brewery_num_ratings" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/details_comment_recycler"
+        android:layout_width="0dp"
+        android:layout_height="225dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_brewery_add_to_favs_button" />
+        app:layout_constraintTop_toBottomOf="@+id/details_enter_comment_textbox"
+        tools:listitem="@layout/comment_item" />
+
+    <Button
+        android:id="@+id/details_add_to_favs_button"
+        android:layout_width="187dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:onClick="addBreweryButton"
+        android:text="Add to Favorites"
+        app:layout_constraintBottom_toTopOf="@+id/details_website_button"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/details_save_rating_button"
+        android:layout_width="187dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:onClick="ratingButton"
+        android:text="Save Rating"
+        app:layout_constraintBottom_toTopOf="@+id/details_back_button"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/details_website_button"
+        android:layout_width="187dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="websiteButton"
+        android:text="Website"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/details_back_button"
+        android:layout_width="187dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="backButton"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

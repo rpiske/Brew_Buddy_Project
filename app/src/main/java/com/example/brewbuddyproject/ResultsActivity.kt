@@ -226,6 +226,7 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Request location permission and show user's current location on the Map
         getLocationPermission()
+        //should I put this in a thread?  wait til finished?
         getDeviceLocation()
     }
 
@@ -249,13 +250,14 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (task.isSuccessful) {
                         // Set the map's camera position to the current location of the device.
                         lastKnownLocation = task.result
+                        val addressInfo = getCityStateFromLatLon()
+                        Log.d(TAG, "getDeviceLocation: string to send ${addressInfo?.get(0)?.locality}, ${addressInfo?.get(0)?.adminArea}")
+                        pingBreweryAPI("${addressInfo?.get(0)?.locality}, ${addressInfo?.get(0)?.adminArea}")
                         if (lastKnownLocation != null) {
                             mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                 LatLng(lastKnownLocation!!.latitude,
                                     lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
-                            val addressInfo = getCityStateFromLatLon()
-                            Log.d(TAG, "getDeviceLocation: string to send ${addressInfo?.get(0)?.locality}, ${addressInfo?.get(0)?.adminArea}")
-                            pingBreweryAPI("${addressInfo?.get(0)?.locality}, ${addressInfo?.get(0)?.adminArea}")
+
                         }
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.")
