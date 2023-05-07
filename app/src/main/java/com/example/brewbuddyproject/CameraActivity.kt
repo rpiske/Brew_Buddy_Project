@@ -28,8 +28,6 @@ import com.example.brewbuddyproject.databinding.ActivityCameraBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-typealias LumaListener = (luma: Double) -> Unit
-
 //Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#1
 class CameraActivity : AppCompatActivity() {
 
@@ -48,8 +46,7 @@ class CameraActivity : AppCompatActivity() {
         if (checkIfCameraPermissionGranted()) {
             startCameraPreview()
         } else {
-            ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
     }
 
@@ -66,8 +63,7 @@ class CameraActivity : AppCompatActivity() {
         val imageCapture = imageCapture ?: return
 
         // Adds photo to the storage
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -78,14 +74,10 @@ class CameraActivity : AppCompatActivity() {
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues)
+            .Builder(contentResolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             .build()
 
-        imageCapture.takePicture(
-            outputOptions,
-            ContextCompat.getMainExecutor(this),
+        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
@@ -127,8 +119,7 @@ class CameraActivity : AppCompatActivity() {
             //Binds camera to the lifecycle
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture)
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
             //Throws an exception if the binding fails
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -140,8 +131,7 @@ class CameraActivity : AppCompatActivity() {
     //Method that checks if permissions were granted
     ////Googler, (Accessed: May 5, 2023)Getting Started with Camera X, (Version: June 22, 2022)https://developer.android.com/codelabs/camerax-getting-started#2
     private fun checkIfCameraPermissionGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it) == PackageManager.PERMISSION_GRANTED
+        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     //File format for taking a photo
@@ -170,12 +160,14 @@ class CameraActivity : AppCompatActivity() {
             if (checkIfCameraPermissionGranted()) {
                 startCameraPreview()
             } else {
-                Toast.makeText(this,
-                    "Camera permission wasn't granted.",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Camera permission wasn't granted.", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
     }
 
+    //Kills the camera activity on clicking tha back button
+    fun backButton(view: View){
+        finish()
+    }
 }
