@@ -161,10 +161,17 @@ class DetailsActivity : AppCompatActivity() {
         finish()
     }
 
+    //Opens web view activity
     fun websiteButton(view: View){
         val myIntent = Intent(this, WebActivity::class.java)
 
         myIntent.putExtra("brewWebsite", passedBrewery?.website_url)
+        this.startActivity(myIntent)
+    }
+
+    //Opens the camera activity
+    fun openCamera(view: View){
+        val myIntent = Intent(this, CameraActivity::class.java)
         this.startActivity(myIntent)
     }
 
