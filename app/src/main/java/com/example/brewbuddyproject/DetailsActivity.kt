@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
@@ -23,9 +24,7 @@ class DetailsActivity : AppCompatActivity() {
     // Globals
     private val TAG = "DetailsActivity"
     private lateinit var myCommentsRecyclerAdapter: MyCommentsAdapter
-    private lateinit var fireBaseCommentsDB: FirebaseFirestore
-    private lateinit var fireBaseRatingsDB: FirebaseFirestore
-    private lateinit var fireBaseBreweryDB: FirebaseFirestore
+    private lateinit var fireBaseDB: FirebaseFirestore
     private var recyclerPosition : Int = 0
     private var currentUser: String? = null
     private var passedBrewery : Brewery? = null
@@ -45,10 +44,7 @@ class DetailsActivity : AppCompatActivity() {
         passedBrewery = intent.getSerializableExtra("passedBrewery") as? Brewery
 
         // Get the Cloud firestore Instance
-        //only need one instance
-        fireBaseCommentsDB = FirebaseFirestore.getInstance()
-        fireBaseRatingsDB = FirebaseFirestore.getInstance()
-        fireBaseBreweryDB = FirebaseFirestore.getInstance()
+        fireBaseDB = FirebaseFirestore.getInstance()
 
         //Load all base brewery details
         findViewById<TextView>(R.id.details_brewery_name).text = passedBrewery?.name.toString()
@@ -66,39 +62,26 @@ class DetailsActivity : AppCompatActivity() {
         pullCommentsFromDB()
         pullRatingsFromDB()
 
-
-        //if brewery found in favorites, pull rating and comments
-        /*fireBasedb.collection("breweries")
+        //check if brewery is already in DB
+        fireBaseDB.collection("breweries")
             .orderBy("name")
             .get()
             .addOnSuccessListener { documents ->
-
                 for(document in documents) {
                     if (document.get("name") != null) {
-                        Log.d(TAG, "firebaseDB: document.get(\"name\") = ${document.get("name")}")
-                        Log.d(TAG, "firebaseDB:  passedBrewery.name = ${passedBrewery?.name}")
                         if (document.get("name") == passedBrewery?.name) {
                             Log.d(TAG, "fireBaseDB: found matching brewery at ${document.id}")
                             foundID = document.id
-                            findViewById<Button>(R.id.details_add_to_favs_button).text = "Update Favorite"
-                            Log.d(TAG, "fireBaseDB: ${document.get("rating")}")
-                            Log.d(TAG, "fireBaseDB: ${document.get("comments")}")
-                            val tempFloat: Double? = document.getDouble("rating")
-                            findViewById<RatingBar>(R.id.details_brewery_rating).rating = tempFloat?.toFloat()!!
-                            //findViewById<EditText>(R.id.details_brewery_details_notes).setText(document.get("comments") as String)
                         }
                     }
                 }
-            }*/
-
-
-
+            }
     }
 
     fun pullRatingsFromDB() {
         breweryRating = 0.0F
         breweryNumberOfRatings = 0
-        fireBaseRatingsDB.collection("ratings")
+        fireBaseDB.collection("ratings")
             .orderBy("name")
             .get()
             .addOnSuccessListener { documents ->
@@ -121,7 +104,7 @@ class DetailsActivity : AppCompatActivity() {
 
     fun pullCommentsFromDB() {
         breweryNumberOfComments = 0
-        fireBaseCommentsDB.collection("comments")
+        fireBaseDB.collection("comments")
             .orderBy("commentNumber")
             .get()
             .addOnSuccessListener { documents ->
@@ -139,7 +122,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     fun commentButton(view: View) {
-        val commentsDB = fireBaseCommentsDB.collection("comments")
+        val commentsDB = fireBaseDB.collection("comments")
         val tempNumComments:String = (breweryNumberOfComments++).toString()
         Log.d(TAG, "commentButton: tempNumComments: $tempNumComments")
         commentsDB.document(commentsDB.document().id).set(Comments("${passedBrewery?.name}", "${getCurrentUser()}", "${findViewById<TextView>(R.id.details_enter_comment_textbox).text}", tempNumComments))
@@ -150,7 +133,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     fun ratingButton(view: View) {
-        val ratingsDB = fireBaseRatingsDB.collection("ratings")
+        val ratingsDB = fireBaseDB.collection("ratings")
         if(!hasUserRated) {
             ratingsDB.document(ratingsDB.document().id).set(Ratings("${passedBrewery?.name}", "${getCurrentUser()}", findViewById<RatingBar>(R.id.details_brewery_rating).rating))
         } else Toast.makeText(this, "You've already rated this brewery!", Toast.LENGTH_SHORT).show()
@@ -197,36 +180,22 @@ class DetailsActivity : AppCompatActivity() {
     // Passing a Brewery and adding it to the database
     private fun addBrewery(passedBrewery : Brewery?){
 
-        // Get the current users email
-        currentUser = getCurrentUser()
-
         // Attach the curent users email address to the dataobject
         if (passedBrewery != null) {
-            passedBrewery.user = currentUser.toString() // Add this to the Data Object
-            passedBrewery.rating = findViewById<RatingBar>(R.id.details_brewery_rating).rating
-            //passedBrewery.comments = findViewById<EditText>(R.id.details_brewery_details_notes).text.toString()
-        }
-        // Getting an instance of our collection
-        val breweryDatabase = fireBaseBreweryDB.collection("breweries")
+            if(foundID == null) {
+                Log.d(TAG, "addBrewery: first stop")
+                passedBrewery.user = getCurrentUser() // Add this to the Data Object
+                // Getting an instance of our collection
+                val breweryDatabase = fireBaseDB.collection("breweries")
 
-        // Getting the auto generated id for the document that we want to create
-        val documentId = breweryDatabase.document().id
-
-
-        // Adding the data
-        if (passedBrewery != null) {
-            if(foundID != null)
-                breweryDatabase.document(foundID!!).set(passedBrewery)
-            else {
+                // Getting the auto generated id for the document that we want to create
+                val documentId = breweryDatabase.document().id
                 foundID = documentId
                 breweryDatabase.document(documentId).set(passedBrewery)
-            }
-        }
+                showDialog("Success", "${passedBrewery.name} Brewery has been added.")
+            } else Toast.makeText(this, "Brewery already in favorites!", Toast.LENGTH_SHORT).show()
 
-        if (passedBrewery != null) {
-            showDialog("Success", "${passedBrewery.name} Brewery has been added.")
         }
-
     }
 
     private fun showDialog(title : String,Message : String){

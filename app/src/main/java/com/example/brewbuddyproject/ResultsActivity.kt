@@ -77,7 +77,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityResultsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //setContentView(R.layout.activity_results)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -87,9 +86,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        /*Places.initialize(applicationContext, getString(R.string.maps_api_key))
-        placesClient = Places.createClient(this)*/
 
         // Get the Cloud firestore Instance
         fireBasedb = FirebaseFirestore.getInstance()
@@ -122,9 +118,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
             .build()
 
         val breweryLocationsAPI = retrofitBuilder.create(BreweryService::class.java)
-        //Log.d(TAG, "pingBreweryAPI: inside pingAPI")
-        //breweryLocationsAPI.getBreweryByZip(searchString, 5).enqueue(object : Callback<List<Brewery>?> {
-        //breweryLocationsAPI.getBreweryByLocation("38.8977,77.0365", 5).enqueue(object : Callback<List<Brewery>?> {
         breweryLocationsAPI.getBreweryByCityState(cityStateArray[0].trim(), convertStatetoFullName(cityStateArray[1].trim())).enqueue(object : Callback<List<Brewery>?> {
 
             // If we get a response from the API
@@ -187,7 +180,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
         //add pins to Maps
         mMap.clear()
         //var hartford = LatLng(41.7659,-72.681)
-        //Log.d(TAG, "updatePins: inside Update Pins")
         var coordinates = LatLng(38.37250, 90.255)
         for (brewery in breweryLocations) {
             //log these lat/lons and see what we got
@@ -210,10 +202,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
             return*/
 
         pingBreweryAPI(searchString)
-        /*if(mMap != null)
-            //how do we wait for pingBreweryAPI to finish and update breweryLocations??
-            updatePins()
-        else Log.d(TAG, "searchButton: nMap is null")*/
     }
 
 
@@ -384,56 +372,6 @@ class ResultsActivity : AppCompatActivity(), OnMapReadyCallback {
             else -> {stateInput} //if invalid input, return original search and generate error
         }
     }
-
-    /*// Call the brewery function
-    fun addBreweryButton(view: View){
-        // Get the last position in the Brewery List that was last selected
-        val position = myRecycleAdapter.getCurrentBrewerySelection()
-
-        if(position != -1){
-            addBrewery(breweryLocations[position])
-        }
-        else
-        {
-            showDialog("Error", "Please make a selection by clicking a brewery")
-        }
-
-
-    }
-
-
-    // ************CURRENTLY THIS IS HARDCODED JUST FOR TESTING PURPOSES*******
-
-    // Passing a Brewery and adding it to the database
-    private fun addBrewery(passedBrewery : Brewery){
-
-
-        // Getting an instance of our collection
-        val breweryDatabase = fireBasedb.collection("breweries")
-
-        // Getting the auto generated id for the document that we want to create
-        val documentId = breweryDatabase.document().id
-
-
-        // Adding the data
-        breweryDatabase.document(documentId).set(passedBrewery)
-
-        showDialog("Success", "${passedBrewery.name} Brewery has been added.")
-
-    }
-
-    fun backButton(view: View){
-        finish()
-    }
-
-    private fun showDialog(title : String,Message : String){
-        val builder = AlertDialog.Builder(this)
-        builder.setCancelable(true)
-        builder.setTitle(title)
-        builder.setMessage(Message)
-        builder.show()
-    }*/
-
 
     // Create the menu option
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -66,8 +66,6 @@ class MainActivity : AppCompatActivity() {
 
     // View a record of all the Breweries
     fun viewFavorites(view: View) {
-       // val myIntent = Intent(this, FavoritesActivity::class.java)
-     //   startActivity(myIntent)
 
         var isEmpty : Boolean = true
 
