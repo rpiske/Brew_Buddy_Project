@@ -116,19 +116,21 @@
 
     <Button
         android:id="@+id/details_add_to_favs_button"
-        android:layout_width="187dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="8dp"
         android:onClick="addBreweryButton"
         android:text="Add to Favorites"
         app:layout_constraintBottom_toTopOf="@+id/details_website_button"
+        app:layout_constraintEnd_toStartOf="@+id/details_save_rating_button"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/details_save_rating_button"
-        android:layout_width="187dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:onClick="ratingButton"
         android:text="Save Rating"
         app:layout_constraintBottom_toTopOf="@+id/details_back_button"
@@ -136,20 +138,22 @@
 
     <Button
         android:id="@+id/details_website_button"
-        android:layout_width="187dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
         android:onClick="websiteButton"
         android:text="Website"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/details_back_button"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/details_back_button"
-        android:layout_width="187dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
         android:onClick="backButton"
         android:text="Back"

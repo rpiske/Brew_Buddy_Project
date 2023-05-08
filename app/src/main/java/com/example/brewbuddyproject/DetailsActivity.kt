@@ -45,6 +45,7 @@ class DetailsActivity : AppCompatActivity() {
         passedBrewery = intent.getSerializableExtra("passedBrewery") as? Brewery
 
         // Get the Cloud firestore Instance
+        //only need one instance
         fireBaseCommentsDB = FirebaseFirestore.getInstance()
         fireBaseRatingsDB = FirebaseFirestore.getInstance()
         fireBaseBreweryDB = FirebaseFirestore.getInstance()
